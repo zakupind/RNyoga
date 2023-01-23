@@ -14,15 +14,15 @@ export const Subscription = ({ onClick }: { onClick: () => void }) => {
     <View style={styles.wrapper}>
       {expiredSubscription ? (
         <View>
-          <Text>
+          <Text style={styles.text}>
             Подписка активна до:{' '}
             {moment(expiredSubscription).format('DD.MM.YYYY')}
           </Text>
         </View>
       ) : (
         <View>
-          <Text>Подписка:</Text>
-          <Text>неактивна</Text>
+          <Text style={styles.text}>Подписка:</Text>
+          <Text style={styles.text}>неактивна</Text>
         </View>
       )}
       <Button
@@ -40,5 +40,8 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 10,
+  },
+  text: {
+    color: '#2E2E2E',
   },
 });

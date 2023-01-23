@@ -11,7 +11,6 @@ import 'moment/locale/ru';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store/reducer';
 import { Icon } from './Icon';
-// import { Ionicons } from '@expo/vector-icons';
 
 const deviceWidth = Dimensions.get('window').width;
 
@@ -37,10 +36,10 @@ export const MeditationItem: FC<Props> = ({
   const { path: statePath, isPlaying } = useSelector(
     (state: RootState) => state.audio,
   );
-  const { expiredSubscription } = useSelector((state: RootState) => state.user);
+  const { isSubscriber } = useSelector((state: RootState) => state.user);
 
   const minutes = Math.floor(lasting / 60);
-  const seconds = lasting % 60;
+  const seconds = Math.floor(lasting % 60);
 
   const isCurrentAudio = statePath === path;
 
@@ -48,7 +47,7 @@ export const MeditationItem: FC<Props> = ({
   date.locale('ru');
   const displayDate = date.format('DD MMMM YYYY');
 
-  const disabled = !isDemo && !expiredSubscription;
+  const disabled = !isDemo && !isSubscriber;
 
   return (
     <View style={styles.container}>
@@ -83,7 +82,8 @@ export const MeditationItem: FC<Props> = ({
         </TouchableOpacity>
         <View style={styles.meta}>
           <Text style={{ color: disabled ? 'gray' : 'black' }}>
-            {minutes}:{seconds}
+            {minutes < 10 ? `0${minutes}` : minutes}:
+            {seconds < 10 ? `0${seconds}` : seconds}
           </Text>
           <View
             style={{
@@ -123,7 +123,6 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 50,
     marginRight: 10,
-    paddingLeft: 4,
   },
   name: {
     width: deviceWidth * 0.8,

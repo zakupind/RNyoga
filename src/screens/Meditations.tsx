@@ -4,6 +4,7 @@ import { Meditation, requestCategories } from '../api/meditations';
 
 import { Category } from '../components/Category';
 import Video from 'react-native-video';
+import TrackPlayer from 'react-native-track-player';
 
 const deviceHeight = Dimensions.get('window').height;
 

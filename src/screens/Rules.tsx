@@ -1,10 +1,11 @@
 import React from 'react';
+import { StyleSheet } from 'react-native';
 import { View, Text, ScrollView } from 'react-native';
 import { Back, Header } from '../components';
 
 export const Rules = ({ navigation }) => {
   return (
-    <View style={{ height: '100%' }}>
+    <View style={styles.wrapper}>
       <Header
         color="#5F5E5E"
         icon={require('../assets/icons/settings.png')}
@@ -17,7 +18,7 @@ export const Rules = ({ navigation }) => {
           label="Правила использования"
           onPress={() => navigation.goBack()}
         />
-        <Text style={{ fontSize: 16, padding: 20 }}>
+        <Text style={styles.text}>
           Таким образом реализация намеченных плановых заданий позволяет оценить
           значение новых предложений. Повседневная практика показывает, что
           укрепление и развитие структуры обеспечивает широкому кругу
@@ -38,3 +39,14 @@ export const Rules = ({ navigation }) => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  wrapper: {
+    height: '100%',
+  },
+  text: {
+    fontSize: 16,
+    padding: 20,
+    color: '#2E2E2E',
+  },
+});

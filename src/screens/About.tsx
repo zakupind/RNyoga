@@ -23,7 +23,7 @@ export const About = ({ navigation }) => {
   );
 
   return (
-    <View style={{ height: '100%' }}>
+    <View style={styles.container}>
       <Header
         color="#5F5E5E"
         icon={require('../assets/icons/settings.png')}
@@ -38,7 +38,7 @@ export const About = ({ navigation }) => {
             source={require('../assets/tatiana.png')}
             style={styles.image}
           />
-          <Text style={{ fontSize: 16, padding: 20 }}>
+          <Text style={styles.text}>
             Меня зовут Татьяна Мельникова.{'\n'}Я профессиональный психолог,
             сертифицированный коуч SFM (модель фактора Успеха), бизнес тренер,
             тренер личной эффективности.{'\n'}
@@ -68,6 +68,9 @@ export const About = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    height: '100%',
+  },
   wrapper: {
     display: 'flex',
     alignItems: 'center',
@@ -81,5 +84,10 @@ const styles = StyleSheet.create({
     width: '80%',
     height: 300,
     marginBottom: 20,
+  },
+  text: {
+    fontSize: 16,
+    padding: 20,
+    color: '#2E2E2E',
   },
 });

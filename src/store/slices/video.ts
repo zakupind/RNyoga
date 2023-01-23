@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import {createSlice} from '@reduxjs/toolkit';
 
 interface Video {
   path: string;
@@ -31,6 +31,5 @@ const video = createSlice({
   },
 });
 
-export const { playVideo, pauseVideo, createVideo, removeVideo } =
-  video.actions;
+export const {playVideo, pauseVideo, createVideo, removeVideo} = video.actions;
 export const videoReducer = video.reducer;

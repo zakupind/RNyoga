@@ -128,7 +128,9 @@ export const SignUp = ({ navigation }) => {
         <View style={{ marginTop: 30, marginBottom: 60 }}>
           <View style={styles.containerLogo}>
             <Image source={require('../assets/logo.png')} />
-            <Text style={styles.text}>Регистрация</Text>
+            <Text style={{ ...styles.text, ...styles.heading }}>
+              Регистрация
+            </Text>
           </View>
           <View style={styles.form}>
             <Input
@@ -227,7 +229,7 @@ export const SignUp = ({ navigation }) => {
             <Button title="Зарегистрироваться" onPress={() => onSubmit()} />
           </View>
           <View style={styles.signIn}>
-            <Text>Регистрировались раннее?</Text>
+            <Text style={styles.text}>Регистрировались раннее? </Text>
             <ButtonLink
               title="Войдите!"
               onPress={() => navigation.navigate('SignIn')}
@@ -258,10 +260,13 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 40,
   },
-  text: {
+  heading: {
     fontSize: 36,
     fontWeight: '200',
     marginTop: 35,
+  },
+  text: {
+    color: '#2E2E2E',
   },
   form: {
     width: '100%',

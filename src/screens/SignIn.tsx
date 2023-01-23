@@ -80,7 +80,7 @@ export const SignIn = ({ navigation }) => {
       <ScrollView>
         <View style={styles.containerLogo}>
           <Image source={require('../assets/logo.png')} />
-          <Text style={styles.text}>Авторизация</Text>
+          <Text style={{ ...styles.text, ...styles.heading }}>Авторизация</Text>
         </View>
         <View style={styles.form}>
           <Input
@@ -115,7 +115,7 @@ export const SignIn = ({ navigation }) => {
           <Button title="Войти" onPress={() => onClick()} />
         </View>
         <View style={styles.signUp}>
-          <Text>Ещё нет учетной записи?</Text>
+          <Text style={styles.text}>Ещё нет учетной записи?</Text>
           <ButtonLink
             title="Зарегестрируйтесь!"
             onPress={() => navigation.navigate('SignUp')}
@@ -146,6 +146,9 @@ const styles = StyleSheet.create({
     marginBottom: '5%',
   },
   text: {
+    color: '#2E2E2E',
+  },
+  heading: {
     fontSize: 36,
     fontWeight: '200',
     marginTop: 35,

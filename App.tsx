@@ -8,23 +8,24 @@
  * @format
  */
 
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 
-import {Provider} from 'react-redux';
+import { Provider } from 'react-redux';
+
+import { store } from './src/store/store';
+
+import { Navigation } from './src/components/Navigation';
 import TrackPlayer from 'react-native-track-player';
-
-import {store} from './src/store/store';
-
-import {Navigation} from './src/components/Navigation';
 
 const App = () => {
   useEffect(() => {
-    async function run() {
-      await TrackPlayer.setupPlayer();
-    }
-
-    run();
-  }, []);
+    TrackPlayer.setupPlayer()
+      .then(() => console.log('ok setup player'))
+      .catch(e => console.log(e));
+    TrackPlayer.updateOptions({
+      stoppingAppPausesPlayback: true,
+    });
+  });
 
   return (
     <Provider store={store}>

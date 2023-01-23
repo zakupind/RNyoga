@@ -33,7 +33,7 @@ export const ForgotPassword = () => {
       }
     } catch (e) {
       setModalVisible(true);
-      if (e.response.data.statusCode !== 500) {
+      if (e.response?.data?.statusCode !== 500) {
         setErrorModal(e?.response?.data?.message);
       } else {
         setErrorModal('Что то пошло не так');
@@ -86,6 +86,7 @@ const styles = StyleSheet.create({
     fontSize: 36,
     fontWeight: '200',
     marginTop: 35,
+    color: '#2E2E2E',
   },
   form: {
     width: '100%',

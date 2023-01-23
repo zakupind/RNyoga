@@ -1,10 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit';
+import moment from 'moment';
 
 interface User {
   name: string;
   email: string;
   expiredSubscription: Date | null;
   isAuth: boolean;
+  isSubscriber: boolean;
 }
 
 const initialState: User = {
@@ -12,6 +14,7 @@ const initialState: User = {
   email: '',
   expiredSubscription: null,
   isAuth: false,
+  isSubscriber: false,
 };
 
 const user = createSlice({
@@ -23,12 +26,19 @@ const user = createSlice({
       state.email = action.payload.email;
       state.expiredSubscription = action.payload.expiredSubscription;
       state.isAuth = true;
+      state.isSubscriber = Boolean(
+        action.payload.expiredSubscription &&
+          moment(action.payload.expiredSubscription).isAfter(
+            moment(new Date()),
+          ),
+      );
     },
     clearUser(state) {
       state.name = '';
       state.email = '';
       state.expiredSubscription = null;
       state.isAuth = false;
+      state.isSubscriber = false;
     },
   },
 });

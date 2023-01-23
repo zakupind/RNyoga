@@ -29,6 +29,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 25,
     fontWeight: '500',
+    color: '#2E2E2E',
   },
   img: {
     height: 20,

@@ -28,7 +28,7 @@ export const Tariff: FC<Props> = ({
         <Text style={styles.font}>Экономия {benefit}%</Text>
       </View>
     ) : (
-      <Text style={{ marginBottom: 16 }}>Базовый тариф</Text>
+      <Text style={{ marginBottom: 16, ...styles.font }}>Базовый тариф</Text>
     )}
     <Button title="Выбрать" onPress={() => onClick()} />
   </View>
@@ -46,6 +46,7 @@ const styles = StyleSheet.create({
   font: {
     fontSize: 18,
     textAlign: 'center',
+    color: '#2E2E2E',
   },
   title: {
     fontWeight: '600',

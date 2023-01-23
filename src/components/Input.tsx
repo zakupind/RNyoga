@@ -35,6 +35,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontWeight: '600',
+    color: '#2E2E2E',
   },
   input: {
     height: 40,

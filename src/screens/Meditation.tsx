@@ -10,7 +10,7 @@ import {
   Image,
   Pressable,
 } from 'react-native';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { BASE_URL_HTTP } from '../api/api';
 import { requestMeditations } from '../api/meditations';
 import { Header } from '../components';
@@ -22,14 +22,21 @@ import { RootState } from '../store/reducer';
 //   InterruptionModeAndroid,
 //   InterruptionModeIOS,
 // } from 'expo-av';
-// import {
-//   createAudio,
-//   pauseAudio,
-//   playAudio,
-//   removeAudio,
-// } from '../store/slices/audio';
-import { useFocusEffect } from '@react-navigation/native';
+import {
+  createAudio,
+  pauseAudio,
+  playAudio,
+  removeAudio,
+} from '../store/slices/audio';
 import { Modal } from '../components/Modal';
+import TrackPlayer, {
+  Event,
+  State,
+  usePlaybackState,
+  useProgress,
+  useTrackPlayerEvents,
+} from 'react-native-track-player';
+import { getIndexTrack } from '../utils/getIndexTrack';
 // import MusicControl, { Command } from 'react-native-music-control';
 
 type MeditationItemType = {
@@ -45,21 +52,17 @@ type MeditationItemType = {
 const deviceHeight = Dimensions.get('window').height;
 const deviceWidth = Dimensions.get('window').width;
 
+const events = [Event.PlaybackState, Event.PlaybackError];
+
 export const Meditation = ({ route, navigation }) => {
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
   const { id, path, nameCategory } = route.params;
   const [data, setData] = useState<MeditationItemType[]>([]);
-  // const [playbackObject, setPlaybackObject] = useState<Audio.Sound | null>(
-  //   new Audio.Sound()
-  // );
-  // const playbackObject = useRef(new Audio.Sound());
 
-  // const [playbackStatus, setPlaybackStatus] = useState<
-  //   AVPlaybackStatus | null | undefined
-  // >(null);
+  const { isSubscriber } = useSelector((state: RootState) => state.user);
   const { path: audioPath } = useSelector((state: RootState) => state.audio);
-  const [duration] = useState(0);
+  const { duration, position } = useProgress();
 
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -83,39 +86,6 @@ export const Meditation = ({ route, navigation }) => {
     }
   };
 
-  // const unmountAudio = async () => {
-  //   if (playbackObject.current) {
-  //     const { isLoaded } = await playbackObject.current.getStatusAsync();
-  //     if (isLoaded) {
-  //       void playbackObject.current.stopAsync();
-  //       void playbackObject.current.unloadAsync();
-  //     }
-  //   }
-  // };
-
-  // const settingsAudio = async () => {
-  //   await Audio.setAudioModeAsync({
-  //     allowsRecordingIOS: true,
-  //     interruptionModeIOS: InterruptionModeIOS.DoNotMix,
-  //     playsInSilentModeIOS: true,
-  //     interruptionModeAndroid: InterruptionModeAndroid.DoNotMix,
-  //     shouldDuckAndroid: false,
-  //     staysActiveInBackground: true,
-  //     playThroughEarpieceAndroid: false,
-  //   });
-  // };
-
-  useFocusEffect(
-    React.useCallback(() => {
-      // settingsAudio();
-
-      return () => {
-        // void unmountAudio();
-        // dispatch(removeAudio());
-      };
-    }, []),
-  );
-
   useEffect(() => {
     getData();
 
@@ -124,66 +94,61 @@ export const Meditation = ({ route, navigation }) => {
     };
   }, []);
 
-  // const handleAudioPlayPause = async (localPath: string) => {
-  //   if (playbackObject !== null && playbackStatus === null) {
-  //     let status = await playbackObject.current.loadAsync(
-  //       { uri: `${BASE_URL_HTTP}${localPath}` },
-  //       { shouldPlay: true },
-  //     );
-
-  //     playbackObject.current.setOnPlaybackStatusUpdate(st => {
-  //       setDuration(
-  //         Math.floor(
-  //           (Number(st.durationMillis) - Number(st.positionMillis)) / 1000,
-  //         ),
-  //       );
-  //     });
-
-  //     dispatch(createAudio(localPath));
-
-  //     return setPlaybackStatus(status);
-  //   }
-
-  //   // It will pause our audio
-  //   if (isPlaying) {
-  //     if (localPath === audioPath) {
-  //       const status = await playbackObject.current.pauseAsync();
-  //       dispatch(pauseAudio());
-  //       return setPlaybackStatus(status);
-  //     } else {
-  //       await playbackObject.current.unloadAsync();
-  //       const status = await playbackObject.current.loadAsync(
-  //         { uri: `${BASE_URL_HTTP}${localPath}` },
-  //         { shouldPlay: true },
-  //       );
-
-  //       dispatch(createAudio(localPath));
-  //       return setPlaybackStatus(status);
-  //     }
-  //   }
-
-  //   // It will resume our audio
-  //   if (!isPlaying) {
-  //     if (localPath === audioPath) {
-  //       const status = await playbackObject.current.playAsync();
-  //       dispatch(playAudio());
-  //       return setPlaybackStatus(status);
-  //     } else {
-  //       await playbackObject.current.unloadAsync();
-  //       const status = await playbackObject.current.loadAsync(
-  //         { uri: `${BASE_URL_HTTP}${localPath}` },
-  //         { shouldPlay: true },
-  //       );
-  //       dispatch(createAudio(localPath));
-  //       return setPlaybackStatus(status);
-  //     }
-  //   }
-  // };
-
   const modalClick = () => {
     setModalVisible(false);
     navigation.navigate('Pays');
   };
+
+  const initTrackList = async () => {
+    const playlist = data
+      .filter(track => track.isDemo || isSubscriber)
+      .map(track => ({
+        id: track.id,
+        url: BASE_URL_HTTP + track.path,
+        title: track.name,
+        artist: 'Tatiana Kim',
+        duration: track.lasting,
+      }));
+
+    const state = await TrackPlayer.getState();
+    if (playlist.length > 0 && state !== State.Playing) {
+      await TrackPlayer.add(playlist);
+    }
+  };
+
+  useEffect(() => {
+    initTrackList();
+  }, [data, isSubscriber]);
+
+  const handlePlayOrPause = async (path: string, id: number) => {
+    const state = await TrackPlayer.getState();
+    const queue = await TrackPlayer.getQueue();
+
+    if (path === audioPath) {
+      if (state === State.Playing) {
+        await TrackPlayer.pause();
+        dispatch(pauseAudio());
+      } else {
+        await TrackPlayer.play();
+        dispatch(playAudio());
+      }
+    } else {
+      await TrackPlayer.play();
+      const indexNewTrack = getIndexTrack(queue, id);
+      await TrackPlayer.skip(indexNewTrack);
+      dispatch(createAudio(path));
+    }
+  };
+
+  useEffect(() => {
+    console.log(duration - position);
+    const lasting = duration - position;
+
+    if (lasting <= 1) {
+      dispatch(removeAudio());
+      void TrackPlayer.pause();
+    }
+  }, [position]);
 
   return (
     <View style={{ height: deviceHeight }}>
@@ -215,10 +180,10 @@ export const Meditation = ({ route, navigation }) => {
             <MeditationItem
               key={id}
               name={name}
-              lasting={path === audioPath ? duration : lasting}
+              lasting={path === audioPath ? duration - position : lasting}
               createdAt={createdAt}
               path={path}
-              onClick={() => console.log('handleAudioPlayPause')}
+              onClick={() => handlePlayOrPause(path, id)}
               isDemo={isDemo}
               onClickNotDemo={() => setModalVisible(true)}
             />
